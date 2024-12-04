@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HELIX - Coming Soon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #F7D938;
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .header {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+            background: linear-gradient(90deg, rgba(247, 217, 56, 0.8), rgba(0, 0, 0, 0.8));
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            letter-spacing: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 1rem 0;
+            display: inline-block;
+        }
+
+        .coming-soon {
+            font-size: 2rem;
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeIn 2s ease-in forwards;
+        }
+
+        .helix-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .strand {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .nucleotide {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #F7D938;
+            border-radius: 50%;
+            opacity: 0.5;
+            box-shadow: 0 0 5px rgba(247, 217, 56, 0.3);
+        }
+
+        .connector {
+            position: absolute;
+            height: 1px;
+            background: rgba(247, 217, 56, 0.2);
+            opacity: 0.2;
+            transform-origin: left center;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+            h2 {
+                font-size: 1.2rem;
+                padding: 0 1rem;
+            }
+        }
+
+        .social-icons {
+            display: flex;
+        }
+
+        .social-icons a {
+            color: #F7D938;
+            margin-left: 15px;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+
+        .social-icons a:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="C:\Users\Aureo Silva\Helix\images\logo.png.png" alt="Logo" class="logo">
+        <div class="social-icons">
+            <a href="https://x.com" target="_blank" aria-label="X (formerly Twitter)">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://t.me" target="_blank" aria-label="Telegram">
+                <i class="fab fa-telegram-plane"></i>
+            </a>
+        </div>
+    </div>
+    <div class="helix-container" id="helixContainer"></div>
+    <div class="container">
+        <h1>HELIX</h1>
+        <h2 id="typewriter"></h2>
+        <div class="coming-soon">Coming Soon</div>
+        <button onclick="location.href='home.html'" style="margin-top: 20px; padding: 10px 20px; font-size: 1rem; background-color: #F7D938; color: #000; border: none; border-radius: 5px; cursor: pointer;">Home</button>
+    </div>
+
+    <script>
+        function createHelix() {
+            const container = document.getElementById('helixContainer');
+            const numPoints = 30;
+            const radius = 50;
+            const verticalSpacing = window.innerHeight / numPoints;
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            
+            function createStrand(offset) {
+                const strand = document.createElement('div');
+                strand.className = 'strand';
+                
+                for (let i = 0; i < numPoints; i++) {
+                    const nucleotide = document.createElement('div');
+                    nucleotide.className = 'nucleotide';
+                    
+                    const y = i * verticalSpacing;
+                    const angle = (i * 0.5 + offset) * Math.PI;
+                    const x = Math.sin(angle) * radius + window.innerWidth / 2;
+                    
+                    nucleotide.style.left = `${x}px`;
+                    nucleotide.style.top = `${y}px`;
+                    
+                    const opacity = y > headerHeight ? 1 : 0;
+                    nucleotide.style.opacity = opacity;
+                    
+                    if (i < numPoints - 1) {
+                        const connector = document.createElement('div');
+                        connector.className = 'connector';
+                        const nextAngle = ((i + 1) * 0.5 + offset) * Math.PI;
+                        const nextX = Math.sin(nextAngle) * radius + window.innerWidth / 2;
+                        const nextY = (i + 1) * verticalSpacing;
+                        
+                        const length = Math.sqrt(Math.pow(nextX - x, 2) + Math.pow(nextY - y, 2));
+                        const angle = Math.atan2(nextY - y, nextX - x);
+                        
+                        connector.style.width = `${length}px`;
+                        connector.style.left = `${x}px`;
+                        connector.style.top = `${y + 4}px`;
+                        connector.style.transform = `rotate(${angle}rad)`;
+                        
+                        connector.style.opacity = opacity;
+                        
+                        strand.appendChild(connector);
+                    }
+                    
+                    strand.appendChild(nucleotide);
+                }
+                return strand;
+            }
+            
+            container.appendChild(createStrand(0));
+            container.appendChild(createStrand(Math.PI));
+            
+            let offset = 0;
+            function animate() {
+                offset += 0.005;
+                container.innerHTML = '';
+                container.appendChild(createStrand(offset));
+                container.appendChild(createStrand(offset + Math.PI));
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+
+        function typeWriter() {
+            const text = "The First Telegram Trading Bot on Movement Chain";
+            const typewriterElement = document.getElementById('typewriter');
+            let i = 0;
+
+            function type() {
+                if (i < text.length) {
+                    typewriterElement.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
+                }
+            }
+
+            type();
+        }
+
+        createHelix();
+        window.addEventListener('resize', createHelix);
+        window.addEventListener('load', typeWriter);
+    </script>
+</body>
+</html>
